@@ -105,15 +105,50 @@ export function DigitalPresenceAssistant() {
     prevPathRef.current = currentPath;
   }, [currentPath]);
 
-  // Analytics mockup
-  const trackEvent = (eventName: string, data: any) => {
-    console.log(`[Analytics Track] ${eventName}:`, {
+  // Analytics — sends event to Google Apps Script backend, falls back to console.log in dev
+  const trackEvent = (eventName: string, data: Record<string, unknown>) => {
+    const payload = {
+      event: eventName,
       ...data,
       timestamp: new Date().toISOString(),
       visitorId: visitorState.visitorId,
       sessionId: visitorState.sessionId,
       path: currentPath,
-    });
+      referrer: typeof document !== "undefined" ? document.referrer : "",
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+    };
+
+    // Always log for debugging (remove if too noisy in production)
+    console.log(`[Analytics Track] ${eventName}:`, payload);
+
+    const analyticsUrl = import.meta.env["VITE_ANALYTICS_URL"] as string | undefined;
+
+    if (!analyticsUrl) {
+      // URL not configured — skip network send (expected in local dev without .env)
+      return;
+    }
+
+    // Use sendBeacon for fire-and-forget reliability on page unload;
+    // fall back to fetch for larger payloads or when Beacon is unavailable.
+    const body = JSON.stringify(payload);
+    const sent =
+      typeof navigator !== "undefined" &&
+      typeof navigator.sendBeacon === "function" &&
+      navigator.sendBeacon(analyticsUrl, new Blob([body], { type: "application/json" }));
+
+    if (!sent) {
+      // Beacon failed or unavailable — use fetch as fallback
+      fetch(analyticsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        // no-cors needed because GAS /exec does not return CORS headers
+        mode: "no-cors",
+        keepalive: true,
+      }).catch(() => {
+        // Silently swallow network errors so analytics never breaks the UI
+      });
+    }
   };
 
   const handleOpenChatbot = () => {

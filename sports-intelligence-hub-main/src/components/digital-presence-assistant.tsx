@@ -118,7 +118,7 @@ export function DigitalPresenceAssistant() {
       userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
     };
 
-    // Always log for debugging (remove if too noisy in production)
+    // Always log for debugging
     console.log(`[Analytics Track] ${eventName}:`, payload);
 
     const analyticsUrl = import.meta.env["VITE_ANALYTICS_URL"] as string | undefined;
@@ -128,22 +128,32 @@ export function DigitalPresenceAssistant() {
       return;
     }
 
-    // Use sendBeacon for fire-and-forget reliability on page unload;
-    // fall back to fetch for larger payloads or when Beacon is unavailable.
+    // IMPORTANT: We use text/plain;charset=UTF-8 intentionally.
+    // application/json triggers a CORS preflight (OPTIONS) which Google Apps Script
+    // /exec does NOT handle, causing the browser to block the request.
+    // text/plain is a CORS-safe "simple" content type — no preflight is sent.
+    // The body is still valid JSON; Apps Script reads it via JSON.parse(e.postData.contents).
     const body = JSON.stringify(payload);
+
+    // Try sendBeacon first — fire-and-forget, survives page unloads, no preflight
     const sent =
       typeof navigator !== "undefined" &&
       typeof navigator.sendBeacon === "function" &&
-      navigator.sendBeacon(analyticsUrl, new Blob([body], { type: "application/json" }));
+      navigator.sendBeacon(
+        analyticsUrl,
+        new Blob([body], { type: "text/plain;charset=UTF-8" }),
+      );
 
     if (!sent) {
-      // Beacon failed or unavailable — use fetch as fallback
+      // Beacon unavailable or returned false — fall back to fetch
       fetch(analyticsUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body,
-        // no-cors needed because GAS /exec does not return CORS headers
         mode: "no-cors",
+        headers: {
+          // text/plain avoids an OPTIONS preflight; body remains JSON
+          "Content-Type": "text/plain;charset=UTF-8",
+        },
+        body,
         keepalive: true,
       }).catch(() => {
         // Silently swallow network errors so analytics never breaks the UI

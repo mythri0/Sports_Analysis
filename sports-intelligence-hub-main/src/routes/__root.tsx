@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { DigitalPresenceAssistant } from "@/components/digital-presence-assistant";
 
 function NotFoundComponent() {
   return (
@@ -122,6 +123,7 @@ function RootComponent() {
       <SiteHeader />
       <main><Outlet /></main>
       <SiteFooter />
+      <DigitalPresenceAssistant />
     </QueryClientProvider>
   );
 }

@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "@tanstack/react-router";
-import { MessageCircle, X, Navigation, Sparkles } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  Navigation,
+  Sparkles,
+  ClipboardList,
+  FileSpreadsheet,
+  Mail,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConnectWithSportsMaxForm } from "@/components/connect-with-sportsmax";
 
 // Utility: Time-based greeting
 function getTimeBasedGreeting() {
@@ -41,6 +50,7 @@ export function DigitalPresenceAssistant() {
   const currentPath = location.pathname;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [popupMsg, setPopupMsg] = useState<{ title: string; desc: string } | null>(null);
   
   const [visitorState, setVisitorState] = useState({
@@ -234,12 +244,70 @@ export function DigitalPresenceAssistant() {
         </div>
       )}
 
-      {/* FAB */}
+      {/* Floating Lead Form Modal */}
+      {isFormOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Connect with SportsMax Form"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl bg-slate-950 border border-slate-800 shadow-2xl p-2 sm:p-3 animate-in zoom-in-95 duration-200">
+            {/* Modal Close Button */}
+            <button
+              onClick={() => setIsFormOpen(false)}
+              className="absolute top-5 right-5 z-20 grid h-8 w-8 place-items-center rounded-xl bg-slate-900/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 transition"
+              aria-label="Close inquiry form"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {/* Embedded Sports Analytics Inquiry Form */}
+            <ConnectWithSportsMaxForm onClose={() => setIsFormOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Floating Form Button (Positioned ABOVE the Chatbot button) */}
       <button
-        onClick={isOpen ? () => setIsOpen(false) : handleOpenChatbot}
-        className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground p-4 rounded-full shadow-xl hover:shadow-primary/25 hover:scale-105 transition-all duration-200"
+        type="button"
+        id="floating-sportsmax-form-button"
+        aria-label="Open Sports Analytics Inquiry Form"
+        onClick={() => {
+          setIsFormOpen((prev) => !prev);
+          if (isOpen) setIsOpen(false);
+        }}
+        className="fixed bottom-22 right-6 z-50 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 p-3.5 rounded-full shadow-xl hover:shadow-emerald-500/30 hover:scale-105 transition-all duration-200 flex items-center justify-center group"
+      >
+        {isFormOpen ? (
+          <X className="w-5 h-5 text-slate-950 stroke-[2.5]" />
+        ) : (
+          <ClipboardList className="w-5 h-5 text-slate-950 stroke-[2.5]" />
+        )}
+
+        {/* Hover Tooltip */}
+        <span className="hidden group-hover:block absolute right-14 bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap shadow-xl pointer-events-none">
+          Connect with SportsMax (Form)
+        </span>
+      </button>
+
+      {/* Floating Chatbot FAB */}
+      <button
+        onClick={() => {
+          if (isOpen) {
+            setIsOpen(false);
+          } else {
+            handleOpenChatbot();
+            if (isFormOpen) setIsFormOpen(false);
+          }
+        }}
+        className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground p-4 rounded-full shadow-xl hover:shadow-primary/25 hover:scale-105 transition-all duration-200 group"
+        aria-label="Open Assistant Chatbot"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        <span className="hidden group-hover:block absolute right-16 bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap shadow-xl pointer-events-none">
+          SportsMax Assistant
+        </span>
       </button>
     </>
   );

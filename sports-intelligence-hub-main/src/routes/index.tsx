@@ -28,6 +28,7 @@ import { DemoBadge, Eyebrow, InsightCard, SectionHead, Workflow } from "@/compon
 import { insights } from "@/lib/sports-data";
 import { INDIVIDUAL_SPORTS, TEAM_SPORTS, GAME_ANALYSIS_MODULES } from "@/lib/sports-directory";
 import runnerImage from "@/assets/sportsmax-runner.jpg";
+import { ConnectWithSportsMax } from "@/components/connect-with-sportsmax";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -500,6 +501,9 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Connect with SportsMax & Assistant Section */}
+      <ConnectWithSportsMax />
     </>
   );
 }

@@ -22,6 +22,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as InstitutionRouteImport } from './routes/institution'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -101,6 +102,11 @@ const HelpRoute = HelpRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstitutionRoute = InstitutionRouteImport.update({
+  id: '/institution',
+  path: '/institution',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlatformRoute = PlatformRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/ecosystem': typeof EcosystemRoute
   '/help': typeof HelpRoute
   '/insights': typeof InsightsRoute
+  '/institution': typeof InstitutionRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/ecosystem': typeof EcosystemRoute
   '/help': typeof HelpRoute
   '/insights': typeof InsightsRoute
+  '/institution': typeof InstitutionRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/ecosystem': typeof EcosystemRoute
   '/help': typeof HelpRoute
   '/insights': typeof InsightsRoute
+  '/institution': typeof InstitutionRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -286,6 +295,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/help'
     | '/insights'
+    | '/institution'
     | '/platform'
     | '/pricing'
     | '/privacy'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/help'
     | '/insights'
+    | '/institution'
     | '/platform'
     | '/pricing'
     | '/privacy'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/ecosystem'
     | '/help'
     | '/insights'
+    | '/institution'
     | '/platform'
     | '/pricing'
     | '/privacy'
@@ -377,6 +389,7 @@ export interface RootRouteChildren {
   EcosystemRoute: typeof EcosystemRoute
   HelpRoute: typeof HelpRoute
   InsightsRoute: typeof InsightsRoute
+  InstitutionRoute: typeof InstitutionRoute
   PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/institution': {
+      id: '/institution'
+      path: '/institution'
+      fullPath: '/institution'
+      preLoaderRoute: typeof InstitutionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/platform': {
@@ -609,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   EcosystemRoute: EcosystemRoute,
   HelpRoute: HelpRoute,
   InsightsRoute: InsightsRoute,
+  InstitutionRoute: InstitutionRoute,
   PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,

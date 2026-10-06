@@ -27,6 +27,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/football")({
   head: () => ({
@@ -305,6 +306,22 @@ export function FootballSportPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Football Match & Practice Drill Video Upload */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Match Video Upload & Telemetry Form"
+              title="Upload Match Video Footage for Optical AI Analysis"
+              text="Submit full-pitch or sideline recordings. Our neural vision pipeline extracts player speed, pressing PPDA, and goal probabilities directly."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Football / Soccer"
+                category="Team Sport"
+                defaultDrill="Full Match Footage / Counter-Attack Drill"
+              />
             </div>
           </div>
         </div>

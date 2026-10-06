@@ -25,7 +25,16 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { DemoBadge, Eyebrow, PageIntro, SectionHead } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 import {
   INDIVIDUAL_SPORTS,
   TEAM_SPORTS,
@@ -335,15 +344,38 @@ function SportCard({ sport }: { sport: SportItem }) {
         </div>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+      <div className="mt-6 pt-4 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <span className="text-[11px] text-muted-foreground">
           Tracked: <strong className="text-foreground">{sport.athletesTracked}</strong>
         </span>
-        <Button asChild size="sm" variant="ghost" className="text-xs font-bold text-primary hover:text-primary group-hover:bg-primary/10">
-          <Link to={sport.href}>
-            Explore Sport <ArrowRight className="h-3.5 w-3.5 ml-1" />
-          </Link>
-        </Button>
+
+        <div className="flex items-center gap-1.5 self-end sm:self-auto">
+          {/* Upload Video & Drill Form Dialog for this Sport */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline" className="text-xs font-semibold h-8 px-2.5 border-primary/30 text-primary hover:bg-primary/10">
+                <Video className="h-3.5 w-3.5 mr-1" /> Upload Video
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl bg-card border-border max-h-[90vh] overflow-y-auto">
+              <DialogHeader className="sr-only">
+                <DialogTitle>Upload Video for {sport.name}</DialogTitle>
+                <DialogDescription>Submit tactical video footage and coaching form</DialogDescription>
+              </DialogHeader>
+              <SportVideoSubmission
+                sportName={sport.name}
+                category={sport.category === "individual" ? "Individual Discipline" : "Team Sport"}
+                defaultDrill={`${sport.name} Practice & Match Session`}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Button asChild size="sm" variant="ghost" className="text-xs font-bold text-primary hover:text-primary group-hover:bg-primary/10 h-8 px-2.5">
+            <Link to={sport.href}>
+              Explore <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </article>
   );

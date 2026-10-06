@@ -703,12 +703,29 @@ export function SiteHeader() {
             Ecosystem
           </Link>
 
+          {/* Institution (School & College) */}
+          <Link
+            to="/institution"
+            className="rounded-md px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary transition flex items-center gap-1"
+          >
+            <span className="rounded bg-primary/10 text-primary text-[10px] font-bold px-1 py-0.2">New</span>
+            Institution
+          </Link>
+
           {/* Pricing */}
           <Link
             to="/pricing"
             className="rounded-md px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary transition"
           >
             Pricing
+          </Link>
+
+          {/* About */}
+          <Link
+            to="/about"
+            className="rounded-md px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary transition"
+          >
+            About
           </Link>
 
           {/* Resources */}
@@ -885,6 +902,14 @@ export function SiteHeader() {
                 className="rounded-md px-3 py-2 text-sm font-semibold hover:bg-secondary"
               >
                 Coaches & Teams
+              </Link>
+              <Link
+                to="/institution"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-md px-3 py-2 text-sm font-semibold hover:bg-secondary flex items-center justify-between"
+              >
+                <span>Institution (School & College)</span>
+                <span className="rounded bg-primary/20 text-primary text-[10px] font-bold px-1.5 py-0.5">Hierarchy</span>
               </Link>
               <Link
                 to="/ecosystem"

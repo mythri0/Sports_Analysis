@@ -211,30 +211,92 @@ export function DigitalPresenceAssistant() {
 
       {/* Chatbot Interface */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-card border shadow-xl rounded-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-          <div className="bg-primary p-4 text-primary-foreground flex justify-between items-center">
-            <h3 className="font-semibold flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" /> Assistant
+        <div className="fixed bottom-24 right-6 z-50 w-88 max-w-[calc(100vw-2rem)] bg-card border border-border shadow-2xl rounded-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col">
+          <div className="bg-primary p-4 text-primary-foreground flex justify-between items-center shrink-0">
+            <h3 className="font-semibold flex items-center gap-2 text-sm">
+              <MessageCircle className="w-5 h-5" /> SportsMax AI Copilot
             </h3>
-            <button onClick={() => setIsOpen(false)} className="hover:opacity-80">
+            <button onClick={() => setIsOpen(false)} className="hover:opacity-80 p-1" aria-label="Close Chat">
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="p-4 bg-muted/30 h-64 overflow-y-auto flex flex-col gap-3">
-            <div className="bg-background border rounded-lg p-3 text-sm">
-              {timeGreeting} 👋 {visitorState.isNew ? "Welcome to SportsMax." : "Welcome back!"}
+
+          <div className="p-4 bg-muted/30 max-h-[420px] overflow-y-auto flex flex-col gap-3">
+            <div className="bg-background border border-border rounded-xl p-3 text-xs shadow-xs">
+              {timeGreeting} 👋 {visitorState.isNew ? "Welcome to SportsMax!" : "Welcome back!"}{" "}
+              You are exploring <strong>{formatPathName(currentPath)}</strong>.
             </div>
-            <div className="bg-background border rounded-lg p-3 text-sm">
-              You're currently exploring <strong>{formatPathName(currentPath)}</strong>.
-            </div>
-            <div className="bg-primary/10 border-primary/20 border rounded-lg p-3 text-sm">
-              <div className="font-medium mb-2 flex items-center gap-2 text-primary">
-                <Navigation className="w-4 h-4" /> What should I check next?
+
+            {/* THREE RELEVANT QUESTIONS SECTION */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-2.5">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> Frequently Asked Questions
               </div>
-              <p className="text-muted-foreground mb-3">{currentSuggestion.text}</p>
-              <Button 
-                size="sm" 
-                className="w-full"
+
+              {/* Question 1 */}
+              <div className="rounded-lg bg-card border border-border p-2.5 text-xs space-y-1.5">
+                <div className="font-bold text-foreground">
+                  1. How does the School & College Institution hierarchy work?
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  SportsMax organizes educational athletics across 3 tiers: <strong>Tier 1: Institution</strong> (Schools/Colleges), <strong>Tier 2: Coaches</strong> (upload match videos & tactical forms), and <strong>Tier 3: Students</strong> (individual analytics dashboards).
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-[11px] h-7 font-semibold"
+                  onClick={() => handleSuggestionClick("/institution")}
+                >
+                  Explore Institution Hub &rarr;
+                </Button>
+              </div>
+
+              {/* Question 2 */}
+              <div className="rounded-lg bg-card border border-border p-2.5 text-xs space-y-1.5">
+                <div className="font-bold text-foreground">
+                  2. How do Coaches upload tactical video footage and drills?
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Coaches can drag-and-drop match or practice recordings (.mp4, .mov), attach drill parameters, and specify coaching objectives. The AI optical tracking engine extracts kinematic velocities and spacing automatically.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-[11px] h-7 font-semibold"
+                  onClick={() => handleSuggestionClick("/institution#coach-upload-section")}
+                >
+                  Open Coach Video Upload Portal &rarr;
+                </Button>
+              </div>
+
+              {/* Question 3 */}
+              <div className="rounded-lg bg-card border border-border p-2.5 text-xs space-y-1.5">
+                <div className="font-bold text-foreground">
+                  3. Where can Student Athletes view their individual analytics?
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Every enrolled student receives a dedicated analytics card displaying session attendance, peak velocity/pace, workload scores (ACWR), and biomechanical skill trajectories.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-[11px] h-7 font-semibold"
+                  onClick={() => handleSuggestionClick("/institution#student-analytics-section")}
+                >
+                  View Student Analytics Dashboard &rarr;
+                </Button>
+              </div>
+            </div>
+
+            {/* Path Suggestion Footer */}
+            <div className="bg-background border border-border rounded-xl p-3 text-xs space-y-2">
+              <div className="font-medium flex items-center gap-1.5 text-primary">
+                <Navigation className="w-3.5 h-3.5" /> Recommended Next Step
+              </div>
+              <p className="text-muted-foreground text-[11px]">{currentSuggestion.text}</p>
+              <Button
+                size="sm"
+                className="w-full text-xs h-7"
                 onClick={() => handleSuggestionClick(currentSuggestion.next)}
               >
                 Go to {formatPathName(currentSuggestion.next)}

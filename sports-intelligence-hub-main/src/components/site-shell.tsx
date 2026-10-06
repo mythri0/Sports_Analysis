@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState, FormEvent } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Activity,
   ArrowRight,
   BarChart3,
   Bot,
   BrainCircuit,
+  CheckCircle2,
   ChevronDown,
   ChevronRight,
   Database,
@@ -14,7 +15,9 @@ import {
   Globe,
   Goal,
   Layers,
+  Loader2,
   LogIn,
+  LogOut,
   Menu,
   Milestone,
   Search,
@@ -22,6 +25,7 @@ import {
   ShieldAlert,
   Sparkles,
   Trophy,
+  User,
   Users,
   Waves,
   X,
@@ -37,6 +41,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth-context";
 
 export function Brand() {
   return (
@@ -56,10 +61,87 @@ export function Brand() {
   );
 }
 
-export function AuthDialog({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+export function AuthDialog({
+  children,
+  defaultMode = "login",
+}: {
+  children: React.ReactNode;
+  defaultMode?: "login" | "signup";
+}) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "signup">(defaultMode);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const { login, signup } = useAuth();
+  const navigate = useNavigate();
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      setMode(defaultMode);
+      setError(null);
+      setSuccessMsg(null);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMsg(null);
+    setLoading(true);
+
+    try {
+      if (mode === "signup") {
+        if (!name.trim()) {
+          setError("Please enter your full name.");
+          setLoading(false);
+          return;
+        }
+        if (!email.trim()) {
+          setError("Please enter your email address.");
+          setLoading(false);
+          return;
+        }
+        const res = await signup(name, email, password);
+        if (!res.success) {
+          setError(res.error || "Failed to create account.");
+          setLoading(false);
+          return;
+        }
+        setSuccessMsg("Account registered successfully! Redirecting to dashboard...");
+      } else {
+        if (!email.trim()) {
+          setError("Please enter your email address.");
+          setLoading(false);
+          return;
+        }
+        const res = await login(email, password);
+        if (!res.success) {
+          setError(res.error || "Invalid login credentials.");
+          setLoading(false);
+          return;
+        }
+        setSuccessMsg("Signed in successfully! Redirecting to dashboard...");
+      }
+
+      setTimeout(() => {
+        setOpen(false);
+        navigate({ to: "/dashboard" });
+      }, 700);
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="border-border bg-card shadow-2xl sm:max-w-md">
         <DialogHeader>
@@ -72,46 +154,132 @@ export function AuthDialog({ children }: { children: React.ReactNode }) {
           <DialogDescription className="text-center text-sm text-muted-foreground">
             {mode === "login"
               ? "Access athlete telemetry, tactical analytics, and AI training models."
-              : "Start your 14-day free intelligence trial for athletes and coaching staffs."}
+              : "Start your intelligence trial for athletes and coaching staffs."}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 pt-2">
+
+        {/* Tab Toggle */}
+        <div className="grid grid-cols-2 rounded-lg bg-secondary/60 p-1 text-xs font-semibold">
+          <button
+            type="button"
+            className={`rounded-md py-1.5 transition ${
+              mode === "login"
+                ? "bg-background text-foreground shadow-xs font-bold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+            onClick={() => {
+              setMode("login");
+              setError(null);
+            }}
+          >
+            Log In
+          </button>
+          <button
+            type="button"
+            className={`rounded-md py-1.5 transition ${
+              mode === "signup"
+                ? "bg-background text-foreground shadow-xs font-bold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+            onClick={() => {
+              setMode("signup");
+              setError(null);
+            }}
+          >
+            Register
+          </button>
+        </div>
+
+        {error && (
+          <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-xs font-medium text-destructive">
+            {error}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs font-medium text-emerald-500">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="grid gap-3 pt-1">
           {mode === "signup" && (
-            <label className="grid gap-1.5 text-xs font-semibold text-foreground">
-              Full Name
-              <Input placeholder="Alex Jordan" className="bg-background" />
+            <label className="grid gap-1 text-xs font-semibold text-foreground">
+              Full Name *
+              <Input
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Alex Jordan"
+                className="bg-background"
+                disabled={loading}
+              />
             </label>
           )}
-          <label className="grid gap-1.5 text-xs font-semibold text-foreground">
-            Email address
-            <Input type="email" placeholder="athlete@sportsmax.ai" className="bg-background" />
+
+          <label className="grid gap-1 text-xs font-semibold text-foreground">
+            Email address *
+            <Input
+              required
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="athlete@sportsmax.ai"
+              className="bg-background"
+              disabled={loading}
+            />
           </label>
-          <label className="grid gap-1.5 text-xs font-semibold text-foreground">
-            Password
-            <Input type="password" placeholder="••••••••" className="bg-background" />
+
+          <label className="grid gap-1 text-xs font-semibold text-foreground">
+            Password *
+            <Input
+              required
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="bg-background"
+              disabled={loading}
+            />
           </label>
-          <Button type="button" className="w-full mt-2 font-semibold">
-            {mode === "login" ? "Sign in to Dashboard" : "Create Free Account"}
-            <ChevronRight className="h-4 w-4 ml-1" />
+
+          <Button type="submit" disabled={loading} className="w-full mt-2 font-semibold">
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {mode === "login" ? "Signing in..." : "Creating account..."}
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-1">
+                {mode === "login" ? "Sign in to Dashboard" : "Create Account"}
+                <ChevronRight className="h-4 w-4" />
+              </span>
+            )}
           </Button>
+
           <div className="text-center mt-2">
             <button
               type="button"
               className="text-xs text-muted-foreground hover:text-primary transition underline underline-offset-4"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
+              onClick={() => {
+                setMode(mode === "login" ? "signup" : "login");
+                setError(null);
+              }}
             >
               {mode === "login"
-                ? "Don't have an account? Sign up free"
+                ? "Don't have an account? Register free"
                 : "Already registered? Log in here"}
             </button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
 }
 
 export function SiteHeader() {
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sportsHover, setSportsHover] = useState(false);
   const [platformHover, setPlatformHover] = useState(false);
@@ -554,12 +722,42 @@ export function SiteHeader() {
 
         {/* Action Controls */}
         <div className="hidden xl:flex items-center gap-2.5">
-          <AuthDialog>
-            <Button variant="ghost" size="sm" className="font-semibold text-xs">
-              <LogIn className="h-4 w-4 mr-1 text-muted-foreground" />
-              Log in
-            </Button>
-          </AuthDialog>
+          {isAuthenticated && user ? (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 rounded-lg bg-secondary/80 hover:bg-secondary border border-border px-3 py-1.5 transition text-xs font-medium text-foreground"
+              >
+                <div className="grid h-6 w-6 place-items-center rounded-full bg-primary/20 text-primary text-[10px] font-bold">
+                  {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-3 w-3" />}
+                </div>
+                <span className="max-w-[120px] truncate font-semibold">{user.name}</span>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={logout}
+                title="Log out"
+                className="text-xs text-muted-foreground hover:text-destructive h-8 px-2"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <AuthDialog defaultMode="login">
+                <Button variant="ghost" size="sm" className="font-semibold text-xs">
+                  <LogIn className="h-4 w-4 mr-1 text-muted-foreground" />
+                  Log in
+                </Button>
+              </AuthDialog>
+              <AuthDialog defaultMode="signup">
+                <Button variant="outline" size="sm" className="font-semibold text-xs border-primary/30 text-primary hover:bg-primary/10">
+                  Register
+                </Button>
+              </AuthDialog>
+            </div>
+          )}
 
           <Button asChild size="sm" className="font-semibold text-xs shadow-sm">
             <Link to="/sports">
@@ -718,17 +916,51 @@ export function SiteHeader() {
               </Link>
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-2 pt-2 border-t border-border">
-              <AuthDialog>
-                <Button variant="outline" className="w-full">
-                  Log in
-                </Button>
-              </AuthDialog>
-              <Button asChild className="w-full">
-                <Link to="/sports" onClick={() => setMobileOpen(false)}>
-                  Get started
-                </Link>
-              </Button>
+            <div className="mt-2 pt-2 border-t border-border">
+              {isAuthenticated && user ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between rounded-lg bg-secondary/80 p-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="grid h-7 w-7 place-items-center rounded-full bg-primary/20 text-primary text-xs font-bold">
+                        {user.name ? user.name.charAt(0).toUpperCase() : <User className="h-3.5 w-3.5" />}
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-foreground">{user.name}</div>
+                        <div className="text-[10px] text-muted-foreground">{user.email}</div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        logout();
+                        setMobileOpen(false);
+                      }}
+                      className="text-xs text-muted-foreground hover:text-destructive h-8 px-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Button asChild className="w-full">
+                    <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                      Go to Dashboard <ChevronRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <AuthDialog defaultMode="login">
+                    <Button variant="outline" className="w-full">
+                      Log in
+                    </Button>
+                  </AuthDialog>
+                  <AuthDialog defaultMode="signup">
+                    <Button className="w-full">
+                      Register
+                    </Button>
+                  </AuthDialog>
+                </div>
+              )}
             </div>
           </div>
         </div>

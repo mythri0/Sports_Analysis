@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { DigitalPresenceAssistant } from "@/components/digital-presence-assistant";
+import { AuthProvider } from "@/lib/auth-context";
 
 function NotFoundComponent() {
   return (
@@ -121,10 +122,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SiteHeader />
-      <main><Outlet /></main>
-      <SiteFooter />
-      <DigitalPresenceAssistant />
+      <AuthProvider>
+        <SiteHeader />
+        <main><Outlet /></main>
+        <SiteFooter />
+        <DigitalPresenceAssistant />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

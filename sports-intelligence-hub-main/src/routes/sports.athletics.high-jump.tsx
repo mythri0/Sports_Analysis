@@ -24,6 +24,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/athletics/high-jump")({
   head: () => ({
@@ -318,6 +319,22 @@ export function AthleticsHighJumpPage() {
               </div>
             </div>
           )}
+
+          {/* Track & Field / High Jump Video Upload & Tactical Drill Form */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Athletics Video & Form Upload"
+              title="Upload Jump & Track Footage for Optical Biomechanical Telemetry"
+              text="Submit high-speed camera or mobile recordings of approaches, takeoffs, and clearances. Extract plant foot force and takeoff angles automatically."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Athletics & High Jump"
+                category="Individual Track & Field"
+                defaultDrill="High Jump Approach & Takeoff Analysis"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </>

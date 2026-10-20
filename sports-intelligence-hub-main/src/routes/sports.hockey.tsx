@@ -23,6 +23,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/hockey")({
   head: () => ({
@@ -193,6 +194,22 @@ export function HockeySportPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Hockey Shift & Video Upload */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Hockey Video & Shift Telemetry Form"
+              title="Upload Rink & Field Footage for Optical Puck/Ball & Shift Analytics"
+              text="Submit broadcast or tactical end-zone footage. Calculate acceleration burst, line shift recovery, and controlled zone entry efficiency."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Hockey (Ice & Field)"
+                category="Team Sport"
+                defaultDrill="Shift Transition & Powerplay Drill"
+              />
             </div>
           </div>
         </div>

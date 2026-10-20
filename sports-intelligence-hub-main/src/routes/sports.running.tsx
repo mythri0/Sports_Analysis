@@ -28,6 +28,7 @@ import {
   Segmented,
 } from "@/components/sports-ui";
 import { progression, runTrend, weekly } from "@/lib/sports-data";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/running")({
   head: () => ({
@@ -375,6 +376,22 @@ export function RunningSportPage() {
               subtitle="Consistent progressive overload without overreaching"
               data={weekly}
             />
+          </div>
+
+          {/* Running & Stride Biomechanics Video Upload */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Running Gait & Video Upload"
+              title="Upload Running Footage for Optical Gait & Cadence Telemetry"
+              text="Upload treadmill, track, or road running videos. Optical sensors calculate contact time, vertical oscillation, and cadence dynamics."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Running & Athletics"
+                category="Individual Endurance"
+                defaultDrill="Gait Analysis & Stride Frequency Session"
+              />
+            </div>
           </div>
         </div>
       </section>

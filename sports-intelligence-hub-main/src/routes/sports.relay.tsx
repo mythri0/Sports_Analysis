@@ -23,6 +23,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/relay")({
   head: () => ({
@@ -254,6 +255,22 @@ export function RelaySportPage() {
               </div>
             </>
           )}
+
+          {/* Relay & Combined Events Video Upload */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Relay Exchange & Video Telemetry Form"
+              title="Upload Baton Exchange & Track Footage for Optical Timing Analysis"
+              text="Submit high-frame-rate lane footage. The computer vision model calculates baton velocity across acceleration zones and incoming-outgoing speed deltas."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Relay & Combined Events"
+                category="Track & Field"
+                defaultDrill="Baton Exchange Box Velocity & Decathlon Transition Drill"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </>

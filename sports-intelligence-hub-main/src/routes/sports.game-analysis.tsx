@@ -30,6 +30,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/game-analysis")({
   head: () => ({
@@ -363,6 +364,22 @@ export function GameAnalysisPage() {
               </div>
             </div>
           )}
+
+          {/* Dedicated Game Analysis Video Upload & Tactical Tagging Form */}
+          <div className="mt-12 border-t border-border pt-12">
+            <SectionHead
+              eyebrow="Game Analysis & Match Recording Form"
+              title="Upload Full Match Broadcast or Tactical Drone Video"
+              text="Submit multi-angle match footage for optical synchronization. Generates automated pass completion heatmaps, pressing triggers, and tactical report exports."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Game Analysis Tactical Suite"
+                category="Multi-Sport Match Telemetry"
+                defaultDrill="Full Match Video & Formation Spacing Analysis"
+              />
+            </div>
+          </div>
         </div>
       </section>
     </>

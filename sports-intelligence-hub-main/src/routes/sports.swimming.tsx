@@ -23,6 +23,7 @@ import {
   PageIntro,
   SectionHead,
 } from "@/components/sports-ui";
+import { SportVideoSubmission } from "@/components/sport-video-submission";
 
 export const Route = createFileRoute("/sports/swimming")({
   head: () => ({
@@ -230,6 +231,22 @@ export function SwimmingSportPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Swimming Stroke & Turn Video Upload */}
+          <div className="mt-12">
+            <SectionHead
+              eyebrow="Swimming Telemetry & Video Upload"
+              title="Upload Pool Footage for Stroke Mechanics & Turn Analysis"
+              text="Submit underwater or poolside recordings. Optical AI tracks stroke cycle duration, DPS (distance per stroke), and flip-turn velocities."
+            />
+            <div className="mt-6 max-w-3xl">
+              <SportVideoSubmission
+                sportName="Swimming & Aquatics"
+                category="Individual Water Sports"
+                defaultDrill="Stroke Cadence & Flip-Turn Telemetry Drill"
+              />
             </div>
           </div>
         </div>
